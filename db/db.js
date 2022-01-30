@@ -4,7 +4,7 @@ const knexfile = require('../knexfile')
 
 const product = process.env.DB_ENVIRONMENT || 'development'
 const connectDB = () =>{
-    const db = knexfile[product]
+    const db = knex(knexfile[product])
     Model.knex(db)
     console.log('DB connected!')
 }
