@@ -8,9 +8,9 @@ module.exports = {
   development: {
     client: 'postgresql',
     connection: {
-      database: process.env.CONNECT_DB,
-      user: process.env.CONNECT_USER,
-      password: process.env.CONNECT_PASSWORD
+      database: "suppliers",
+      user: "postgres",
+      password: "bhaskar18"
     },
     pool: {
       min: 2,
