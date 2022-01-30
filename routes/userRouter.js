@@ -149,7 +149,7 @@ router.get('/totalBill', async(req,res) => {
     }
 })
 
-router.get('/', async(req,res) => {
+router.get('/getItems', async(req,res) => {
     const getitem = await Item.query().select('id','itemName','itemCost')
     res.send(getitem)
 })
