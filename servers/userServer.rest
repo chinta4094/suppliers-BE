@@ -1,0 +1,43 @@
+POST http://localhost:8000/user/login
+Content-Type: application/json
+
+{
+    "email" : "bhaskar4094@gmail.com"
+}
+
+###
+POST http://localhost:8000/user/addToCart/1/10
+Content-Type: application/json
+
+{
+    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYmhhc2thcjQwOTRAZ21haWwuY29tIiwiaWF0IjoxNjQzNTIxNzE0fQ.s77DwFLxZm9Td4Q0gZYM_ydnF4KxsZLiig7rpEGopp4"
+}
+
+###
+POST http://localhost:8000/user/totalAmount
+Content-Type: application/json
+
+{
+    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYmhhc2thcjQwOTRAZ21haWwuY29tIiwiaWF0IjoxNjQzNTIxNzE0fQ.s77DwFLxZm9Td4Q0gZYM_ydnF4KxsZLiig7rpEGopp4"
+}
+
+###
+GET http://localhost:8000/user/totalBill
+Content-Type: application/json
+
+{
+    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYmhhc2thcjQwOTRAZ21haWwuY29tIiwiaWF0IjoxNjQzNTIxNzE0fQ.s77DwFLxZm9Td4Q0gZYM_ydnF4KxsZLiig7rpEGopp4"
+}
+
+###
+GET http://localhost:8000/user/getItems
+
+###
+GET http://localhost:8000/user/cartItems
+Content-Type: application/json
+
+{
+    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYmhhc2thcjQwOTRAZ21haWwuY29tIiwiaWF0IjoxNjQzNTIxNzE0fQ.s77DwFLxZm9Td4Q0gZYM_ydnF4KxsZLiig7rpEGopp4"
+}
+
+###
