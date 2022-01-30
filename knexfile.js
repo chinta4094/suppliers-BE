@@ -30,7 +30,7 @@ module.exports = {
       password : '91aa3a2e0d4d3c8ea97e416ee39a9f5ad2472a2b669d4c6ce7048732f0e36af8',
       URL : 'dyiyiejhbmffwu:91aa3a2e0d4d3c8ea97e416ee39a9f5ad2472a2b669d4c6ce7048732f0e36af8@ec2-54-208-139-247.compute-1.amazonaws.com:5432/d474rruip86dd1',
       CLI : 'heroku pg:psql postgresql-encircled-98028 --app srinivasa-suppliers',
-      ssl : true
+      ssl : { rejectUnauthorized: false }
     },
     pool: {
       min: 2,
