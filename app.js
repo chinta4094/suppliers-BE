@@ -5,12 +5,12 @@ const itemRouter = require('./routes/itemRouter')
 const userRouter = require('./routes/userRouter')
 
 const app = express()
-const port = process.env.PORT || 8000
+const port = process.env.PORT || 3001
 
 app.use(express.json())
 app.use(express.urlencoded({ extended : true }))
 
-dataBase()
+// dataBase()
 
 app.use('/admin',adminRouter)
 app.use('/item',itemRouter)
