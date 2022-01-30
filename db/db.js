@@ -2,9 +2,9 @@ const knex = require('knex')
 const { Model } = require('objection')
 const knexfile = require('../knexfile')
 
-const production = process.env.PRODUCTION
+const product = process.env.PRODUCTION
 function connectDB(){
-    const db = knex(knexfile.production || knexfile.development)
+    const db = knex(knexfile)[product]
     Model.knex(db)
     console.log('DB connected!')
 }
