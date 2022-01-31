@@ -36,7 +36,7 @@ Content-Type: application/json
 GET http://localhost:8000/user/getItems
 
 ###
-GET http://localhost:8000/user/cartItems
+GET http://localhost:8000/user/cartItems/bhaskar4094@gmail.com
 Content-Type: application/json
 
 {

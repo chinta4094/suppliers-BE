@@ -38,17 +38,27 @@ router.get('/login/:loginDetails',async(req,res) => {
             details : "login failed"
         })
     }else{
-        const addDetails = await Token.query().insert({
-            "id" : 2,
-            "email" : email,
-            "secretToken" : token
-        })
-        res.send({
-            message : "User Exists",
-            email : findDetails[0].email,
-            details : "success",
-            token : token
-        })
+        const findTokenDetails = await Token.query().select('email').where('email',email)
+        if(findTokenDetails[0].length == 0){
+            const addDetails = await Token.query().insert({
+                "email" : email,
+                "secretToken" : token
+            })
+            res.send({
+                message : "User Exists",
+                email : findDetails[0].email,
+                details : "success",
+                token : token
+            })
+        }else{
+            const updateToken = await Token.query().patch({ secretToken : token }).where('email',email)
+            res.send({
+                message : "User Exists",
+                email : findDetails[0].email,
+                details : "success",
+                token : token
+            })
+        }
     }
 })
 
@@ -160,26 +170,29 @@ router.get('/getItems', async(req,res) => {
     res.send(getitem)
 })
 
-router.get('/cartItems',async(req,res) => {
-    const token = req.body.token
-    const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
-    if(verifyToken){
-        const getCartDetails = await Cart.query().select('itemName','itemCost','quantity')
-        .where('email',verifyToken.user)
-        if(!getCartDetails){
-            res.send('ERROR')
-        }else{
-            res.send({
-                message : 'success',
-                fullDetails : {
-                    email : verifyToken.user,
-                    details : getCartDetails
-                }
-            })
-        }
-    }else{
-        res.send('INVALID TOKEN')
-    }
+router.get('/cartItems/:email',async(req,res) => {
+    const email = req.params.email
+    const token = await Token.query().select('id','email','token').where('email',email)
+    console.log(token)
+    // const verifyToken = jwt.verify(token[0].token,process.env.SECRET_KEY)
+    // console.log(verifyToken)
+    // if(verifyToken){
+    //     const getCartDetails = await Cart.query().select('itemName','itemCost','quantity')
+    //     .where('email',verifyToken.user)
+    //     if(!getCartDetails){
+    //         res.send('ERROR')
+    //     }else{
+    //         res.send({
+    //             message : 'success',
+    //             fullDetails : {
+    //                 email : verifyToken.user,
+    //                 details : getCartDetails
+    //             }
+    //         })
+    //     }
+    // }else{
+    //     res.send('INVALID TOKEN')
+    // }
 })
 
 router.get('/huhu', async(req,res) => {
