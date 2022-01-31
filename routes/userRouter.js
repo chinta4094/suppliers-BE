@@ -62,7 +62,7 @@ router.get('/login/:loginDetails',async(req,res) => {
     }
 })
 
-router.get('/addToCart/:id/:quantity:email', async(req,res) => {
+router.get('/addToCart/:id/:quantity/:email', async(req,res) => {
     const email = req.params.email
     var { id,quantity } = req.params
     const findId = await Item.query().findById(id)
