@@ -48,8 +48,7 @@ router.get('/login',async(req,res) => {
 router.get('/addToCart/:id/:quantity', async(req,res) => {
     var { id,quantity } = req.params
     const token = req.body.token
-    if(token){
-        const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
+    const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
         if(verifyToken){
             const findId = await Item.query().findById(id)
             const findNameInCart = await Cart.query().select('itemName','quantity')
@@ -82,9 +81,6 @@ router.get('/addToCart/:id/:quantity', async(req,res) => {
         else{
             res.send("Token Incorrect")
         }
-    }else{
-        res.send("Pls Provide Token")
-    }
 })
 
 router.get('/totalAmount', async(req,res) => {
