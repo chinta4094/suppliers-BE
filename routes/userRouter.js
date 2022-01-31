@@ -6,6 +6,7 @@ const Item = require('../models/itemModel')
 const Cart = require('../models/cartModel')
 const Payment = require('../models/paymentModel')
 const Token = require('../models/tokenModel')
+const HUHU = require('../models/huhuModel')
 require('dotenv').config()
 
 router.get('/', async(req,res) => {
@@ -37,12 +38,19 @@ router.get('/login/:loginDetails',async(req,res) => {
             details : "login failed"
         })
     }else{
-        res.send({
-            message : "User Exists",
-            email : findDetails[0].email,
-            details : "success",
-            token : token
+        const findEmail = await Token.query().insert({
+            "id" : 1,
+            "email" : email,
+            "secretToken" : token
         })
+        console.log(findEmail)
+        // res.send({
+        //     message : "User Exists",
+        //     email : findDetails[0].email,
+        //     details : "success",
+        //     token : token
+        // })
+        res.send("hi")
     }
 })
 
@@ -175,4 +183,19 @@ router.get('/cartItems',async(req,res) => {
         res.send('INVALID TOKEN')
     }
 })
+
+router.get('/huhu', async(req,res) => {
+    const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
+    if(verifyToken){
+        const email = verifyToken.user
+        const addRecord = await HUHU.query().insert({
+            "string" : "bhaskar",
+            "integer" : 21
+        })
+        res.send(addRecord)
+    }else{
+        res.send("Pls Provide Token")
+    }
+})
+
 module.exports = router
