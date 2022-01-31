@@ -5,12 +5,12 @@ const User = require('../models/userModel')
 const Item = require('../models/itemModel')
 const Cart = require('../models/cartModel')
 const Payment = require('../models/paymentModel')
+const Token = require('../models/tokenModel')
 require('dotenv').config()
 
 router.get('/', async(req,res) => {
     res.send({
-        message : 'WELCOMR TO USERS PAGE',
-        token : process.env.SECRET_KEY
+        message : 'WELCOMR TO USERS PAGE'
     })
 })
 
@@ -27,10 +27,10 @@ router.get('/signup', async(req,res) => {
     }
 })
 
-router.get('/login',async(req,res) => {
-    const loginDetails = process.env.LOGIN
-    const findDetails = await User.query().select('email').where('email',loginDetails)
-    const token = jwt.sign({user : loginDetails},process.env.SECRET_KEY)
+router.get('/login/:loginDetails',async(req,res) => {
+    const email = req.params.loginDetails
+    const findDetails = await User.query().select('email').where('email',email)
+    const token = jwt.sign({ user : email } ,process.env.SECRET_KEY)
     if(!findDetails[0]){
         res.send({
             message : "No User Exists, Pls Signup First",
@@ -39,6 +39,7 @@ router.get('/login',async(req,res) => {
     }else{
         res.send({
             message : "User Exists",
+            email : findDetails[0].email,
             details : "success",
             token : token
         })
