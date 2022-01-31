@@ -7,11 +7,11 @@ const Cart = require('../models/cartModel')
 const Payment = require('../models/paymentModel')
 require('dotenv').config()
 
-var verifyToken = {
-    user : 'srinivasa444@gmail.com'
-}
 router.get('/', async(req,res) => {
-    res.send('WELCOMR TO USERS PAGE')
+    res.send({
+        message : 'WELCOMR TO USERS PAGE',
+        token : process.env.SECRET_KEY
+    })
 })
 
 router.post('/signup', async(req,res) => {
