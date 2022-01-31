@@ -14,7 +14,7 @@ router.get('/', async(req,res) => {
     })
 })
 
-router.post('/signup', async(req,res) => {
+router.get('/signup', async(req,res) => {
     const record = req.body
     const addUser = await User.query().insert(record)
     if(!addUser){
@@ -27,7 +27,7 @@ router.post('/signup', async(req,res) => {
     }
 })
 
-router.post('/login',async(req,res) => {
+router.get('/login',async(req,res) => {
     const loginDetails = req.body
     const findDetails = await User.query().select('email').where('email',loginDetails.email)
     const token = jwt.sign({user : loginDetails.email},process.env.SECRET_KEY)
@@ -45,7 +45,7 @@ router.post('/login',async(req,res) => {
     }
 })
 
-router.post('/addToCart/:id/:quantity', async(req,res) => {
+router.get('/addToCart/:id/:quantity', async(req,res) => {
     var { id,quantity } = req.params
     const token = req.body.token
     if(token){
@@ -87,7 +87,7 @@ router.post('/addToCart/:id/:quantity', async(req,res) => {
     }
 })
 
-router.post('/totalAmount', async(req,res) => {
+router.get('/totalAmount', async(req,res) => {
     const token = req.body.token
     const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
     if(verifyToken){
