@@ -28,8 +28,8 @@ router.get('/signup', async(req,res) => {
 })
 
 router.get('/login',async(req,res) => {
-    const loginDetails = req.body
-    const findDetails = await User.query().select('email').where('email',loginDetails.email)
+    const loginDetails = process.env.LOGIN
+    const findDetails = await User.query().select('email').where('email',loginDetails)
     const token = jwt.sign({user : loginDetails.email},process.env.SECRET_KEY)
     if(!findDetails[0]){
         res.send({
