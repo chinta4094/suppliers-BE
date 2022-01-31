@@ -1,4 +1,4 @@
-GET http://localhost:8000/user/login/srinivasa444@gmail.com
+GET http://localhost:8000/user/login/bhaskar4094@gmail.com
 Content-Type: application/json
 
 {

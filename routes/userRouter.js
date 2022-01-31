@@ -38,19 +38,17 @@ router.get('/login/:loginDetails',async(req,res) => {
             details : "login failed"
         })
     }else{
-        const findEmail = await Token.query().insert({
-            "id" : 1,
+        const addDetails = await Token.query().insert({
+            "id" : 2,
             "email" : email,
             "secretToken" : token
         })
-        console.log(findEmail)
-        // res.send({
-        //     message : "User Exists",
-        //     email : findDetails[0].email,
-        //     details : "success",
-        //     token : token
-        // })
-        res.send("hi")
+        res.send({
+            message : "User Exists",
+            email : findDetails[0].email,
+            details : "success",
+            token : token
+        })
     }
 })
 
@@ -189,8 +187,9 @@ router.get('/huhu', async(req,res) => {
     if(verifyToken){
         const email = verifyToken.user
         const addRecord = await HUHU.query().insert({
+            "id" : 2,
             "string" : "bhaskar",
-            "integer" : 21
+            "number" : 21
         })
         res.send(addRecord)
     }else{
