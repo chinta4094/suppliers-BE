@@ -30,7 +30,7 @@ router.get('/signup', async(req,res) => {
 router.get('/login',async(req,res) => {
     const loginDetails = process.env.LOGIN
     const findDetails = await User.query().select('email').where('email',loginDetails)
-    const token = jwt.sign({user : loginDetails.email},process.env.SECRET_KEY)
+    const token = jwt.sign({user : loginDetails},process.env.SECRET_KEY)
     if(!findDetails[0]){
         res.send({
             message : "No User Exists, Pls Signup First",
