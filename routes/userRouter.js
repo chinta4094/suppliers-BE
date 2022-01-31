@@ -95,7 +95,7 @@ router.get('/addToCart/:id/:quantity/:email', async(req,res) => {
         
 })
 
-router.get('/totalAmount:email', async(req,res) => {
+router.get('/totalAmount/:email', async(req,res) => {
     const email = req.params.email
     const total = await Cart.query().select('itemCost','quantity').where('email',email)
         var mul = [],sum = 0
