@@ -49,7 +49,7 @@ router.post('/addToCart/:id/:quantity', async(req,res) => {
     var { id,quantity } = req.params
     const token = req.body.token
     if(token){
-        const verifyToken = jwt.verify(token,process.env.SECRET_KEY)
+        const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
         if(verifyToken){
             const findId = await Item.query().findById(id)
             const findNameInCart = await Cart.query().select('itemName','quantity')
@@ -89,7 +89,7 @@ router.post('/addToCart/:id/:quantity', async(req,res) => {
 
 router.post('/totalAmount', async(req,res) => {
     const token = req.body.token
-    const verifyToken = jwt.verify(token,process.env.SECRET_KEY)
+    const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
     if(verifyToken){
         const email = verifyToken.user
         const total = await Cart.query().select('itemCost','quantity').where('email',email)
@@ -136,7 +136,7 @@ router.post('/totalAmount', async(req,res) => {
 
 router.get('/totalBill', async(req,res) => {
     const token = req.body.token
-    const verifyToken = jwt.verify(token,process.env.SECRET_KEY)
+    const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
     if(verifyToken){
         const email = verifyToken.user
         var total = await Payment.query().select('email','total').where('email',email)
@@ -159,7 +159,7 @@ router.get('/getItems', async(req,res) => {
 
 router.get('/cartItems',async(req,res) => {
     const token = req.body.token
-    const verifyToken = jwt.verify(token,process.env.SECRET_KEY)
+    const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
     if(verifyToken){
         const getCartDetails = await Cart.query().select('itemName','itemCost','quantity')
         .where('email',verifyToken.user)
