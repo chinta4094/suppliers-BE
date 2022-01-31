@@ -39,7 +39,7 @@ router.get('/login/:loginDetails',async(req,res) => {
         })
     }else{
         const findTokenDetails = await Token.query().select('email').where('email',email)
-        if(findTokenDetails[0].length == 0){
+        if(!findTokenDetails[0]){
             const addDetails = await Token.query().insert({
                 "email" : email,
                 "secretToken" : token
@@ -62,18 +62,16 @@ router.get('/login/:loginDetails',async(req,res) => {
     }
 })
 
-router.get('/addToCart/:id/:quantity', async(req,res) => {
+router.get('/addToCart/:id/:quantity:email', async(req,res) => {
+    const email = req.params.email
     var { id,quantity } = req.params
-    const token = req.body.token
-    const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
-        if(verifyToken){
-            const findId = await Item.query().findById(id)
-            const findNameInCart = await Cart.query().select('itemName','quantity')
-            .where('itemName',findId.itemName)
-            .where('email',verifyToken.user)
+    const findId = await Item.query().findById(id)
+    const findNameInCart = await Cart.query().select('itemName','quantity')
+    .where('itemName',findId.itemName)
+            .where('email',email)
             if(findNameInCart.length == 0){
                 const addToCart = await Cart.query().insert({
-                    "email" : verifyToken.user,
+                    "email" : email,
                     "itemName" : findId.itemName,
                     "itemCost" : findId.itemCost,
                     "quantity" : parseInt(quantity),
@@ -86,7 +84,7 @@ router.get('/addToCart/:id/:quantity', async(req,res) => {
                 }
             }else{
                 const updateCart = await Cart.query().patch({"quantity" : parseInt(quantity),"total" : findId.itemCost * parseInt(quantity)})
-                .where('email',verifyToken.user)
+                .where('email',email)
                 .where('itemName',findId.itemName)
                 if(updateCart){
                     res.send("Updated Successfully")
@@ -94,18 +92,12 @@ router.get('/addToCart/:id/:quantity', async(req,res) => {
                     res.send("Not Updated")
                 }   
             }
-        }
-        else{
-            res.send("Token Incorrect")
-        }
+        
 })
 
-router.get('/totalAmount', async(req,res) => {
-    const token = req.body.token
-    const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
-    if(verifyToken){
-        const email = verifyToken.user
-        const total = await Cart.query().select('itemCost','quantity').where('email',email)
+router.get('/totalAmount:email', async(req,res) => {
+    const email = req.params.email
+    const total = await Cart.query().select('itemCost','quantity').where('email',email)
         var mul = [],sum = 0
         for(var i=0;i<total.length;i++){
             mul[i] = { details : total[i], total : total[i].itemCost * total[i].quantity }  
@@ -142,17 +134,12 @@ router.get('/totalAmount', async(req,res) => {
                 }
             }
         }
-    }else{
-        res.send('INVALID TOKEN')
-    }
 })
 
-router.get('/totalBill', async(req,res) => {
+router.get('/totalBill/:email', async(req,res) => {
+    const email = req.params.email
     const token = req.body.token
-    const verifyToken = jwt.verify(process.env.TOKEN,process.env.SECRET_KEY)
-    if(verifyToken){
-        const email = verifyToken.user
-        var total = await Payment.query().select('email','total').where('email',email)
+    var total = await Payment.query().select('email','total').where('email',email)
         const getCartDetails = await Cart.query().select('itemName','itemCost','quantity','total')
         .where('email',email)
         res.send({
@@ -160,12 +147,9 @@ router.get('/totalBill', async(req,res) => {
             itemDetails : getCartDetails,
             finalAmount : total[0].total
         })
-    }else{
-        res.send("Pls Provide Token")
-    }
 })
 
-router.get('/getItems', async(req,res) => {
+router.get('/getItems/:email', async(req,res) => {
     const getitem = await Item.query().select('id','itemName','itemCost')
     res.send(getitem)
 })
@@ -173,26 +157,19 @@ router.get('/getItems', async(req,res) => {
 router.get('/cartItems/:email',async(req,res) => {
     const email = req.params.email
     const token = await Token.query().select('id','email','token').where('email',email)
-    console.log(token)
-    // const verifyToken = jwt.verify(token[0].token,process.env.SECRET_KEY)
-    // console.log(verifyToken)
-    // if(verifyToken){
-    //     const getCartDetails = await Cart.query().select('itemName','itemCost','quantity')
-    //     .where('email',verifyToken.user)
-    //     if(!getCartDetails){
-    //         res.send('ERROR')
-    //     }else{
-    //         res.send({
-    //             message : 'success',
-    //             fullDetails : {
-    //                 email : verifyToken.user,
-    //                 details : getCartDetails
-    //             }
-    //         })
-    //     }
-    // }else{
-    //     res.send('INVALID TOKEN')
-    // }
+    const getCartDetails = await Cart.query().select('itemName','itemCost','quantity')
+    .where('email',email)
+    if(!getCartDetails){
+        res.send('ERROR')
+    }else{
+        res.send({
+            message : 'success',
+            fullDetails : {
+                email : email,
+                details : getCartDetails
+            }
+        })
+    }
 })
 
 router.get('/huhu', async(req,res) => {
