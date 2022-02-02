@@ -1,0 +1,8 @@
+POST http://localhost:8000/admin/addItem
+Content-Type: application/json
+
+{
+    "itemName" : "Tent-8",
+    "itemCost" : 400,
+    "image" : "tent-8.png"
+}

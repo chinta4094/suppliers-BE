@@ -23,13 +23,13 @@ module.exports = {
   production: {
     client: 'pg',
     connection: {
-      host : 'ec2-54-208-139-247.compute-1.amazonaws.com',
-      database : 'd474rruip86dd1',
-      user : 'dyiyiejhbmffwu',
+      host : 'ec2-34-233-157-189.compute-1.amazonaws.com',
+      database : 'dcn3d28dvc9n9t',
+      user : 'msnosihfmelukl',
       port : 5432,
-      password : '91aa3a2e0d4d3c8ea97e416ee39a9f5ad2472a2b669d4c6ce7048732f0e36af8',
-      URL : 'dyiyiejhbmffwu:91aa3a2e0d4d3c8ea97e416ee39a9f5ad2472a2b669d4c6ce7048732f0e36af8@ec2-54-208-139-247.compute-1.amazonaws.com:5432/d474rruip86dd1',
-      CLI : 'heroku pg:psql postgresql-encircled-98028 --app srinivasa-suppliers',
+      password : '64d2ce1832e2984c180f00f0ab2cd30272fdd634e7055c7c4e6064e3c8e0b143',
+      URL : 'msnosihfmelukl:64d2ce1832e2984c180f00f0ab2cd30272fdd634e7055c7c4e6064e3c8e0b143@ec2-34-233-157-189.compute-1.amazonaws.com:5432/dcn3d28dvc9n9t',
+      CLI : 'heroku pg:psql postgresql-concave-39684 --app srinivasa-suppliers',
       ssl : { rejectUnauthorized: false }
     },
     pool: {

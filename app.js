@@ -3,10 +3,12 @@ const dataBase = require('./db/db')
 const adminRouter = require('./routes/adminRouter')
 const itemRouter = require('./routes/itemRouter')
 const userRouter = require('./routes/userRouter')
+const cors = require('cors')
 
 const app = express()
 const port = process.env.PORT || 8000
 
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended : true }))
 

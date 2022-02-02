@@ -10,12 +10,11 @@ const HUHU = require('../models/huhuModel')
 require('dotenv').config()
 
 router.get('/', async(req,res) => {
-    res.send({
-        message : 'WELCOMR TO USERS PAGE'
-    })
+    const getDetails = await User.query().select()
+    res.send(getDetails)
 })
 
-router.get('/signup', async(req,res) => {
+router.post('/signup', async(req,res) => {
     const record = req.body
     const addUser = await User.query().insert(record)
     if(!addUser){
@@ -28,9 +27,9 @@ router.get('/signup', async(req,res) => {
     }
 })
 
-router.get('/login/:loginDetails',async(req,res) => {
+router.post('/login/:loginDetails',async(req,res) => {
     var email = req.params.loginDetails
-    const findDetails = await User.query().select('email').where('email',email)
+    const findDetails = await User.query().select('email','password').where('email',email)
     const token = jwt.sign({ user : email } ,process.env.SECRET_KEY)
     if(!findDetails[0]){
         res.send({
@@ -63,7 +62,6 @@ router.get('/login/:loginDetails',async(req,res) => {
                     token : token
                 })
                 const findEmail1 = await Token.query().findById('1')
-                console.log(findEmail1)
             }
             else{
                 const findEmail2 = await Token.query().findById('1')
@@ -181,8 +179,8 @@ router.get('/totalBill', async(req,res) => {
     }
 })
 
-router.get('/getItems/:email', async(req,res) => {
-    const getitem = await Item.query().select('id','itemName','itemCost')
+router.get('/getItems', async(req,res) => {
+    const getitem = await Item.query().select('id','itemName','itemCost','image')
     res.send(getitem)
 })
 

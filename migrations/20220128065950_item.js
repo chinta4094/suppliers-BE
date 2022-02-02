@@ -8,6 +8,7 @@
       table.increments('id');
       table.string('itemName').notNullable();
       table.integer('itemCost').notNullable();
+      table.string('image');
       table.timestamps(true,true)
   })  
 };

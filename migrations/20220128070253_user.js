@@ -9,8 +9,8 @@
       table.string('firstName').notNullable();
       table.string('lastName').notNullable();
       table.string('email').notNullable().unique();
-      table.integer('phoneNumber').notNullable();
-      table.integer('itemId').references('id').inTable('item')
+      table.string('password').notNullable();
+      table.string('confirmPassword').notNullable();
       table.timestamps(true,true)
   })
 };
