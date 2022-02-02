@@ -20,7 +20,7 @@ router.post('/addItem', async(req,res) => {
     if(!addItem){
         res.send('Not Inserted')
     }else{
-        res.send({
+        console.log({
             message : true,
             details : addItem
         })
