@@ -162,6 +162,7 @@ router.get('/totalAmount', async(req,res) => {
 router.get('/totalBill', async(req,res) => {
     const findToken = await Token.query().findById('1')
     const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
+    const email = verifyToken.user
     if(verifyToken){
         var total = await Payment.query().select('email','total').where('email',email)
         const getCartDetails = await Cart.query().select('itemName','itemCost','quantity','total')
