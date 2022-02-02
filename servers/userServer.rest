@@ -1,9 +1,24 @@
-GET http://localhost:8000/user/login/bhaskar4094@gmail.com
+GET http://localhost:8000/user/signup
+Content-Type: application/json
+
+{
+    "id" : 1,
+    "firstName" : "Bhaskar",
+    "lastName" : "Chinta",
+    "email" : "bhaskar4094@gmail.com",
+    "phoneNumber" : 123456789
+}
+
+###
+GET http://localhost:8000/user/login/kavyachinta@gmail.com
 Content-Type: application/json
 
 {
     "email" : "bhaskar4094@gmail.com"
 }
+
+###
+GET http://localhost:8000/user/logout
 
 ###
 GET http://localhost:8000/user/huhu
@@ -36,7 +51,7 @@ Content-Type: application/json
 GET http://localhost:8000/user/getItems
 
 ###
-GET http://localhost:8000/user/cartItems/srinivasa444@gmail.com
+GET http://localhost:8000/user/cartItems
 Content-Type: application/json
 
 {

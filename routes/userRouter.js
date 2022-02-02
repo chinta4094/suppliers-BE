@@ -29,7 +29,7 @@ router.get('/signup', async(req,res) => {
 })
 
 router.get('/login/:loginDetails',async(req,res) => {
-    const email = req.params.loginDetails
+    var email = req.params.loginDetails
     const findDetails = await User.query().select('email').where('email',email)
     const token = jwt.sign({ user : email } ,process.env.SECRET_KEY)
     if(!findDetails[0]){
@@ -38,9 +38,10 @@ router.get('/login/:loginDetails',async(req,res) => {
             details : "login failed"
         })
     }else{
-        const findTokenDetails = await Token.query().select('email').where('email',email)
-        if(!findTokenDetails[0]){
+        const findTokenDetails = await Token.query().findById('1')
+        if(findTokenDetails == undefined){
             const addDetails = await Token.query().insert({
+                "id" : 1,
                 "email" : email,
                 "secretToken" : token
             })
@@ -51,18 +52,36 @@ router.get('/login/:loginDetails',async(req,res) => {
                 token : token
             })
         }else{
-            const updateToken = await Token.query().patch({ secretToken : token }).where('email',email)
-            res.send({
-                message : "User Exists",
-                email : findDetails[0].email,
-                details : "success",
-                token : token
-            })
+            const findEmail = await Token.query().select('email').findById('1')
+            if(findEmail.email === email){
+                const updateToken = await Token.query().patch({ secretToken : token }).where('email',email)
+
+                res.send({
+                    message : "User Exists",
+                    email : findDetails[0].email,
+                    details : "success",
+                    token : token
+                })
+                const findEmail1 = await Token.query().findById('1')
+                console.log(findEmail1)
+            }
+            else{
+                //const updateToken = await Token.query().patch({id : 1,email : email, secretToken : token }).findById('1')
+                // res.send({
+                //     message : "User Exists",
+                //     email : findDetails[0].email,
+                //     details : "success",
+                //     token : token
+                // })
+                const findEmail2 = await Token.query().findById('1')
+                // console.log(findEmail2)
+                res.send("User With " + findEmail2.email + "exists, logout for login...")
+            }
         }
     }
 })
 
-router.get('/addToCart/:id/:quantity/:email', async(req,res) => {
+router.get('/addToCart/:id/:quantity', async(req,res) => {
     const email = req.params.email
     var { id,quantity } = req.params
     const findId = await Item.query().findById(id)
@@ -140,13 +159,17 @@ router.get('/totalBill/:email', async(req,res) => {
     const email = req.params.email
     const token = req.body.token
     var total = await Payment.query().select('email','total').where('email',email)
-        const getCartDetails = await Cart.query().select('itemName','itemCost','quantity','total')
-        .where('email',email)
+    const getCartDetails = await Cart.query().select('itemName','itemCost','quantity','total')
+    .where('email',email)
+    if(getCartDetails[0]){
         res.send({
             email : email,
             itemDetails : getCartDetails,
             finalAmount : total[0].total
         })
+    }else{
+        res.send("Amount ")
+    }
 })
 
 router.get('/getItems/:email', async(req,res) => {
@@ -154,21 +177,24 @@ router.get('/getItems/:email', async(req,res) => {
     res.send(getitem)
 })
 
-router.get('/cartItems/:email',async(req,res) => {
+router.get('/cartItems',async(req,res) => {
     const email = req.params.email
-    const token = await Token.query().select('id','email','token').where('email',email)
-    const getCartDetails = await Cart.query().select('itemName','itemCost','quantity')
-    .where('email',email)
-    if(!getCartDetails){
-        res.send('ERROR')
-    }else{
-        res.send({
-            message : 'success',
-            fullDetails : {
-                email : email,
-                details : getCartDetails
-            }
-        })
+    const findToken = await Token.query().findById('1')
+    const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
+    if(verifyToken){
+        const getCartDetails = await Cart.query().select('itemName','itemCost','quantity')
+        .where('email',verifyToken.user)
+        if(!getCartDetails){
+            res.send('ERROR')
+        }else{
+            res.send({
+                message : 'success',
+                fullDetails : {
+                    email : verifyToken.user,
+                    details : getCartDetails
+                }
+            })
+        }
     }
 })
 
@@ -184,6 +210,15 @@ router.get('/huhu', async(req,res) => {
         res.send(addRecord)
     }else{
         res.send("Pls Provide Token")
+    }
+})
+
+router.get('/logout', async(req,res) => {
+    const deleteToken = await Token.query().delete().where('id',1)
+    if(deleteToken){
+        res.send("LOGOUT SUCCESFULLY")
+    }else{
+        res.send("LOGIN NOW..")
     }
 })
 

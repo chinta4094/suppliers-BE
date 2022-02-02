@@ -5,7 +5,7 @@
  exports.up = function(knex) {
     return knex.schema
     .createTable('token',(table) => {
-        table.increments('id');
+        table.integer('id').notNullable()
         table.string('email').notNullable()
         table.string('secretToken').notNullable()
         table.timestamps(true,true)
