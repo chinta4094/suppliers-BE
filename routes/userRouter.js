@@ -42,7 +42,7 @@ router.post('/login/:loginDetails',async(req,res) => {
             const addDetails = await Token.query().insert({
                 "id" : 1,
                 "email" : email,
-                "token" : token
+                "secretToken" : token
             })
             res.send({
                 message : "User Exists",
@@ -53,7 +53,7 @@ router.post('/login/:loginDetails',async(req,res) => {
         }else{
             const findEmail = await Token.query().select('email').findById('1')
             if(findEmail.email === email){
-                const updateToken = await Token.query().patch({ token : token }).where('email',email)
+                const updateToken = await Token.query().patch({ secretToken : token }).where('email',email)
 
                 res.send({
                     message : "User Exists",
@@ -73,7 +73,7 @@ router.post('/login/:loginDetails',async(req,res) => {
 
 router.get('/addToCart/:id/:quantity', async(req,res) => {
     const findToken = await Token.query().findById('1')
-    const verifyToken = jwt.verify(findToken.token,process.env.SECRET_KEY)
+    const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
     const email = verifyToken.user
     if(verifyToken){
         var { id,quantity } = req.params
@@ -112,7 +112,7 @@ router.get('/addToCart/:id/:quantity', async(req,res) => {
 
 router.get('/totalAmount', async(req,res) => {
     const findToken = await Token.query().findById('1')
-    const verifyToken = jwt.verify(findToken.token,process.env.SECRET_KEY)
+    const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
     const email = verifyToken.user
     if(verifyToken){
         const total = await Cart.query().select('itemCost','quantity').where('email',email)
@@ -159,7 +159,7 @@ router.get('/totalAmount', async(req,res) => {
 
 router.get('/totalBill', async(req,res) => {
     const findToken = await Token.query().findById('1')
-    const verifyToken = jwt.verify(findToken.token,process.env.SECRET_KEY)
+    const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
     const email = verifyToken.user
     if(verifyToken){
         var total = await Payment.query().select('email','total').where('email',email)
@@ -186,7 +186,7 @@ router.get('/getItems', async(req,res) => {
 
 router.get('/cartItems',async(req,res) => {
     const findToken = await Token.query().findById('1')
-    const verifyToken = jwt.verify(findToken.token,process.env.SECRET_KEY)
+    const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
     if(verifyToken){
         const getCartDetails = await Cart.query().select('itemName','itemCost','quantity')
         .where('email',verifyToken.user)
