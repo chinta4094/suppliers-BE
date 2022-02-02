@@ -66,15 +66,7 @@ router.get('/login/:loginDetails',async(req,res) => {
                 console.log(findEmail1)
             }
             else{
-                //const updateToken = await Token.query().patch({id : 1,email : email, secretToken : token }).findById('1')
-                // res.send({
-                //     message : "User Exists",
-                //     email : findDetails[0].email,
-                //     details : "success",
-                //     token : token
-                // })
                 const findEmail2 = await Token.query().findById('1')
-                // console.log(findEmail2)
                 res.send("User With " + findEmail2.email + "exists, logout for login...")
             }
         }
@@ -82,41 +74,50 @@ router.get('/login/:loginDetails',async(req,res) => {
 })
 
 router.get('/addToCart/:id/:quantity', async(req,res) => {
-    const email = req.params.email
-    var { id,quantity } = req.params
-    const findId = await Item.query().findById(id)
-    const findNameInCart = await Cart.query().select('itemName','quantity')
-    .where('itemName',findId.itemName)
-            .where('email',email)
-            if(findNameInCart.length == 0){
-                const addToCart = await Cart.query().insert({
-                    "email" : email,
-                    "itemName" : findId.itemName,
-                    "itemCost" : findId.itemCost,
-                    "quantity" : parseInt(quantity),
-                    "total" : findId.itemCost * parseInt(quantity)
-                })
-                if(!addToCart){
-                    res.send(err)
-                }else{
-                    res.send('Add To Cart Successfully')
-                }
+    const findToken = await Token.query().findById('1')
+    const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
+    const email = verifyToken.user
+    if(verifyToken){
+        var { id,quantity } = req.params
+        const findId = await Item.query().findById(id)
+        const findNameInCart = await Cart.query().select('itemName','quantity')
+        .where('itemName',findId.itemName)
+        .where('email',email)
+        if(findNameInCart.length == 0){
+            const addToCart = await Cart.query().insert({
+                "email" : email,
+                "itemName" : findId.itemName,
+                "itemCost" : findId.itemCost,
+                "quantity" : parseInt(quantity),
+                "total" : findId.itemCost * parseInt(quantity)
+            })
+            if(!addToCart){
+                res.send(err)
             }else{
-                const updateCart = await Cart.query().patch({"quantity" : parseInt(quantity),"total" : findId.itemCost * parseInt(quantity)})
-                .where('email',email)
-                .where('itemName',findId.itemName)
-                if(updateCart){
-                    res.send("Updated Successfully")
-                }else{
-                    res.send("Not Updated")
-                }   
+                res.send('Add To Cart Successfully')
             }
+        }else{
+            const updateCart = await Cart.query().patch({"quantity" : parseInt(quantity),"total" : findId.itemCost * parseInt(quantity)})
+            .where('email',email)
+            .where('itemName',findId.itemName)
+            if(updateCart){
+                res.send("Updated Successfully")
+            }else{
+                res.send("Not Updated")
+            }   
+        }
+    }else{
+        res.send("TOKEN VERIFICATION FAILED")
+    }
         
 })
 
-router.get('/totalAmount/:email', async(req,res) => {
-    const email = req.params.email
-    const total = await Cart.query().select('itemCost','quantity').where('email',email)
+router.get('/totalAmount', async(req,res) => {
+    const findToken = await Token.query().findById('1')
+    const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
+    const email = verifyToken.user
+    if(verifyToken){
+        const total = await Cart.query().select('itemCost','quantity').where('email',email)
         var mul = [],sum = 0
         for(var i=0;i<total.length;i++){
             mul[i] = { details : total[i], total : total[i].itemCost * total[i].quantity }  
@@ -153,22 +154,29 @@ router.get('/totalAmount/:email', async(req,res) => {
                 }
             }
         }
+    }else{
+        res.send("TOKEN VERIFICATION FAILED")
+    }
 })
 
-router.get('/totalBill/:email', async(req,res) => {
-    const email = req.params.email
-    const token = req.body.token
-    var total = await Payment.query().select('email','total').where('email',email)
-    const getCartDetails = await Cart.query().select('itemName','itemCost','quantity','total')
-    .where('email',email)
-    if(getCartDetails[0]){
-        res.send({
-            email : email,
-            itemDetails : getCartDetails,
-            finalAmount : total[0].total
-        })
+router.get('/totalBill', async(req,res) => {
+    const findToken = await Token.query().findById('1')
+    const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
+    if(verifyToken){
+        var total = await Payment.query().select('email','total').where('email',email)
+        const getCartDetails = await Cart.query().select('itemName','itemCost','quantity','total')
+        .where('email',verifyToken.user)
+        if(getCartDetails[0]){
+            res.send({
+                email : verifyToken.user,
+                itemDetails : getCartDetails,
+                finalAmount : total[0].total
+            })
+        }else{
+            res.send("Amount ")
+        }
     }else{
-        res.send("Amount ")
+        res.send("TOKEN VERIFICATION FAILED")
     }
 })
 
@@ -178,7 +186,6 @@ router.get('/getItems/:email', async(req,res) => {
 })
 
 router.get('/cartItems',async(req,res) => {
-    const email = req.params.email
     const findToken = await Token.query().findById('1')
     const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
     if(verifyToken){
@@ -195,6 +202,8 @@ router.get('/cartItems',async(req,res) => {
                 }
             })
         }
+    }else{
+        res.send("TOKEN VERIFICATION FAILED")
     }
 })
 
