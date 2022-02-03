@@ -5,13 +5,13 @@ POST http://localhost:8000/user/login/kavyachinta@gmail.com
 
 
 ###
-GET http://localhost:8000/user/logout
+DELETE http://localhost:8000/user/logout
 
 ###
 GET http://localhost:8000/user/huhu
 
 ###
-GET http://localhost:8000/user/addToCart/1/10
+POST http://localhost:8000/user/addToCart/1/10
 Content-Type: application/json
 
 {
@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8000/user/totalAmount
+POST http://localhost:8000/user/totalAmount
 Content-Type: application/json
 
 {
@@ -46,4 +46,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8000/user/
+GET http://localhost:8000/user/userDetails
+
+###
+GET http://localhost:8000/user/cartDetails

@@ -32,7 +32,7 @@ router.post('/login/:loginDetails',async(req,res) => {
     const findDetails = await User.query().select('email','password').where('email',email)
     const token = jwt.sign({ user : email } ,process.env.SECRET_KEY)
     if(!findDetails[0]){
-        res.send({
+        res.status(400).send({
             message : "No User Exists, Pls Signup First",
             details : "login failed"
         })
@@ -55,23 +55,26 @@ router.post('/login/:loginDetails',async(req,res) => {
             if(findEmail.email === email){
                 const updateToken = await Token.query().patch({ secretToken : token }).where('email',email)
 
-                res.send({
+                res.status(200).send({
                     message : "User Exists",
                     email : findDetails[0].email,
                     details : "success",
                     token : token
                 })
-                const findEmail1 = await Token.query().findById('1')
             }
             else{
                 const findEmail2 = await Token.query().findById('1')
-                res.send("User With " + findEmail2.email + "exists, logout for login...")
+                res.send({
+                    status : 204,
+                    message : "User With " + findEmail2.email + "exists, logout for login..."
+                })
+                console.log(findEmail2)
             }
         }
     }
 })
 
-router.get('/addToCart/:id/:quantity', async(req,res) => {
+router.post('/addToCart/:id/:quantity', async(req,res) => {
     const findToken = await Token.query().findById('1')
     const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
     const email = verifyToken.user
@@ -92,14 +95,20 @@ router.get('/addToCart/:id/:quantity', async(req,res) => {
             if(!addToCart){
                 res.send(err)
             }else{
-                res.send('Add To Cart Successfully')
+                res.send({
+                    details : "success",
+                    message : 'Add To Cart Successfully'
+                })
             }
         }else{
             const updateCart = await Cart.query().patch({"quantity" : parseInt(quantity),"total" : findId.itemCost * parseInt(quantity)})
             .where('email',email)
             .where('itemName',findId.itemName)
             if(updateCart){
-                res.send("Updated Successfully")
+                res.send({
+                    details : "success",
+                    message : "Updated Successfully"
+                })
             }else{
                 res.send("Not Updated")
             }   
@@ -110,7 +119,7 @@ router.get('/addToCart/:id/:quantity', async(req,res) => {
         
 })
 
-router.get('/totalAmount', async(req,res) => {
+router.post('/totalAmount', async(req,res) => {
     const findToken = await Token.query().findById('1')
     const verifyToken = jwt.verify(findToken.secretToken,process.env.SECRET_KEY)
     const email = verifyToken.user
@@ -128,26 +137,28 @@ router.get('/totalAmount', async(req,res) => {
         }
         if(findPaymentEmail.length == 0){
             var insert = await Payment.query().insert(data)
-            res.send(insert)
+            res.send({
+                details : "success",
+                message : "Inserted"
+            })
         }else{
             var updateTotal = await Payment.query().select('email','total').where('email',email)
             if(updateTotal[0].total == sum){
                 res.send({
-                    message : "Payment UPTO date",
-                    details : updateTotal
+                    details : "success",
+                    message : "updated1"
                 })
             }else{
                 const updatePayment = await Payment.query().patch({"total" : data.total}).where('email',email)
                 var update = await Payment.query().select('email','total').where('email',email)
                 if(updatePayment){
                     res.send({
-                        message : "Payment Updated Successfully",
-                        details : update
+                        details : "success",
+                        message : "updated2"
                     })
                 }else{
                     res.send({
-                        message : "Payment Not Updated",
-                        details : update
+                        details : "Payment Not Updated"
                     })
                 }
             }
@@ -168,8 +179,8 @@ router.get('/totalBill', async(req,res) => {
         if(getCartDetails[0]){
             res.send({
                 email : verifyToken.user,
-                itemDetails : getCartDetails,
-                finalAmount : total[0].total
+                finalAmount : total[0].total,
+                details : "success"
             })
         }else{
             res.send("Amount ")
@@ -221,13 +232,45 @@ router.get('/huhu', async(req,res) => {
     }
 })
 
-router.get('/logout', async(req,res) => {
-    const deleteToken = await Token.query().delete().where('id',1)
+router.delete('/logout', async(req,res) => {
+    const deleteToken = await Token.query().delete().findById('1')
     if(deleteToken){
-        res.send("LOGOUT SUCCESFULLY")
+        res.send({
+            message : "LOGOUT SUCCESFULLY",
+            details : "success",
+            delete : deleteToken
+        })
     }else{
-        res.send("LOGIN NOW..")
+        res.send({
+                message : "LOGIN NOW ... ",
+                details : "failed"
+            })
     }
+    
+})
+
+router.get('/userDetails',async(req,res) => {
+    const findAll = await Token.query().findById('1')
+    if(findAll == null){
+        res.send({
+            details : [ {
+                firstName : "******",
+                lastName : "*******"
+            }],
+            message : "failed"
+        })
+    }else{
+        const findEmail = await User.query().select('firstName','lastName','email').where('email',findAll.email)
+        res.send({
+            message : "success",
+            details : findEmail
+        })
+    }
+})
+
+router.get('/cartDetails', async(req,res) => {
+    const getCartDetails = await Cart.query().select('itemName','itemCost','quantity','total')
+    res.send(getCartDetails)
 })
 
 module.exports = router
