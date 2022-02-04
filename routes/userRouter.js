@@ -269,7 +269,8 @@ router.get('/userDetails',async(req,res) => {
 })
 
 router.get('/cartDetails', async(req,res) => {
-    const getCartDetails = await Cart.query().select('itemName','itemCost','quantity','total')
+    const findEmail = await Token.query().findById('1')
+    const getCartDetails = await Cart.query().select('itemName','itemCost','quantity','total').where('email',findEmail.email)
     res.send(getCartDetails)
 })
 
